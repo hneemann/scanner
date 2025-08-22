@@ -1,0 +1,67 @@
+/* (A) ENTIRE PAGE */
+* {
+  font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+}
+body, html {
+  padding: 0; margin: 0;
+  color: #fff;
+  background: #101010;
+}
+body {
+  margin: 0 auto;
+}
+#cam-live, #cam-snaps, #cam-controls { width: 100%; }
+
+/* (B) LIVE FEED VIDEO */
+#cam-live {
+  height: 85vh;
+  object-fit: cover;
+}
+
+/* (C) CONTROL BUTTONS */
+div.controls {
+  display: flex;
+  background: #777;
+}
+div.controls img {
+  flex-grow: 1;
+  border: 0;
+  padding-left: 20vw;
+  padding-right: 20vw;
+  cursor: pointer;
+}
+
+#cam-snaps canvas {
+  max-height: 150px;
+  width: auto;
+}
+
+img.dialog {
+  width: 20vw;
+}
+
+div.buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+img.button {
+  margin: 0 auto;
+  height: 5vh;
+}
+
+div.dialog {
+  border-style: solid;
+  border-color: darkgray;
+  background-color: white;
+  padding: 1.5em 1em 1em 1em;
+  visibility: hidden;
+  text-align: center;
+  color: black;
+  position: fixed;
+  top: 30vh;
+  left: 25vw;
+  width: 50vw;
+  height: 40vh;
+  z-index: 5;
+}

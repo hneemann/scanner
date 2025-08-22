@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Webcam Capture Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- https://fonts.google.com/icons -->
+    <link rel="stylesheet" href="/assets/webcam.css">
+    <script defer src="/assets/webcam.js"></script>
+  </head>
+  <body>
+    <!-- (A) VIDEO LIVE FEED -->
+    <video id="cam-live" autoplay></video>
+
+    <!-- (B) CONTROLS -->
+    <div class="controls">
+      <img class="button" onclick="webcam.flip()" src="/assets/flip.svg"/>
+      <img class="button" onclick="webcam.upload()" src="/assets/photo.svg"/>
+    </div>
+
+    <div class="dialog" id="upload">
+        <img class="dialog" src="/assets/waiting.svg"/>
+        <p>Warte auf übertragung...</p>
+    <div>
+
+    <div class="dialog" id="success">
+        <img class="dialog" src="/assets/success.svg"/>
+        <p>Erfolgreich!</p>
+        <div class="buttons">
+            <img class="button" onclick="createPDF()" src="/assets/document.svg"/>
+            <img class="button" onclick="hide('success')" src="/assets/photo.svg"/>
+        </div>
+    <div>
+
+    <div onclick="hide('successDoc')" class="dialog" id="successDoc">
+        <img class="dialog" src="/assets/success.svg"/>
+        <p>Erfolgreich!</p>
+    <div>
+
+    <div onclick="hide('failed')" class="dialog" id="failed">
+        <img class="dialog" src="/assets/failed.svg"/>
+        <p>Fehlgeschlagen!</p>
+    <div>
+
+  </body>
+</html>
