@@ -42,7 +42,7 @@ func main() {
 		session.NewDataManager[data.UserData](
 			session.NewFileSystemFactory(*dataFolder),
 			persist{}),
-		4*time.Hour, time.Hour)
+		time.Hour, 15*time.Minute)
 	if *debug {
 		err := sc.CreateDebugSession("admin", "admin", "debugTokenForAdmin")
 		if err != nil {

@@ -5,3 +5,5 @@
 /go.work.sum
 /earth.fritz.box.pem
 /earth.fritz.box.key
+/scan
+/update.sh
