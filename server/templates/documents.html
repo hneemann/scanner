@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Documents</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="/assets/webcam.css">
+    <script defer src="/assets/webcam.js"></script>
+  </head>
+  <body>
+      <h2 class="doc">Dokumente</h2>
+      <div class="docList">
+            {{range $i,$n := .}}
+                <div class="docEntry">
+                    <a class="doc" {{if $n.Processed}} style="color:#333;"  {{end}} href="/documents/?download={{$i}}">{{$n.Name}}</a>
+                    <a href="/documents/?delete={{$i}}"><img class="button" src="/assets/delete.svg"/></a>
+                </div>
+            {{end}}
+      </div>
+
+    <div class="controls">
+      <a href="/"><img class="button" src="/assets/photo.svg"/></a>
+      <a href="/documents/?delete=all"><img class="button" src="/assets/delete.svg"/></a>
+    </div>
+
+  </body>
+</html>

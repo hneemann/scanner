@@ -58,6 +58,7 @@ func main() {
 	mux.HandleFunc("/", sc.CheckSessionFunc(server.Main))
 	mux.HandleFunc("/store/", sc.CheckSessionFunc(server.Store))
 	mux.HandleFunc("/create/", sc.CheckSessionFunc(server.Create))
+	mux.HandleFunc("/documents/", sc.CheckSessionFunc(server.Documents))
 
 	serv := &http.Server{Addr: ":" + strconv.Itoa(*port), Handler: mux}
 

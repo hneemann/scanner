@@ -1,0 +1,35 @@
+@media (pointer: coarse) {
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 200%;
+    }
+
+    html {
+        -moz-text-size-adjust: none;
+        -webkit-text-size-adjust: none;
+    }
+}
+
+@media (pointer: fine) {
+    body {
+        font-family: Arial, sans-serif;
+    }
+}
+
+
+table.loginTable {
+    border-style: solid;
+    border-color: darkgray;
+    background-color: white;
+    padding: 1.5em 1em 1em 1em;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    width: 20em;
+    margin-left: -10em;
+    z-index: 5;
+}
+
+input {
+    font-size: inherit;
+}

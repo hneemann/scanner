@@ -19,6 +19,23 @@ body {
   object-fit: cover;
 }
 
+h2.doc {
+  color: #777;
+}
+
+a.doc {
+  color: #777;
+}
+
+div.docList {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 1em;
+  margin: 1em;
+  margin-bottom: 2em;
+}
+
+
 /* (C) CONTROL BUTTONS */
 div.controls {
   display: flex;
@@ -27,8 +44,8 @@ div.controls {
 div.controls img {
   flex-grow: 1;
   border: 0;
-  padding-left: 20vw;
-  padding-right: 20vw;
+  padding-left: 10vw;
+  padding-right: 10vw;
   cursor: pointer;
 }
 

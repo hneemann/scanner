@@ -5,6 +5,7 @@ import (
 	"github.com/hneemann/session/fileSys"
 	"image"
 	"image/jpeg"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -97,12 +98,6 @@ func (d *UserData) Create() error {
 		return err
 	}
 
-	for _, doc := range d.Documents {
-		if doc.Type == TypeJPEG {
-			names = append(names, doc.Name)
-		}
-	}
-
 	d.Documents = append(d.Documents, &Document{Name: pdfName, Type: TypePDF, Processed: false})
 
 	for _, doc := range d.Documents {
@@ -139,4 +134,34 @@ func Load(fs fileSys.FileSystem) (*UserData, error) {
 
 	data.fs = fs
 	return &data, nil
+}
+
+func (d *UserData) DeleteAll() error {
+	log.Println("Deleting all documents")
+	for _, doc := range d.Documents {
+		err := d.fs.Delete(doc.Name)
+		if err != nil {
+			return err
+		}
+	}
+	d.Documents = d.Documents[0:0]
+	return nil
+}
+
+func (d *UserData) Delete(index int) error {
+	if index < 0 || index >= len(d.Documents) {
+		return nil
+	}
+	log.Println("Deleting document", index, d.Documents[index].Name)
+	doc := d.Documents[index]
+	err := d.fs.Delete(doc.Name)
+	if err != nil {
+		return err
+	}
+	d.Documents = append(d.Documents[:index], d.Documents[index+1:]...)
+	return nil
+}
+
+func (d *UserData) Reader(name string) (io.ReadCloser, error) {
+	return d.fs.Reader(name)
 }
