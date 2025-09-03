@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"scan/scanner"
+	"strconv"
 	"time"
 )
 
@@ -29,7 +30,16 @@ type Document struct {
 type UserData struct {
 	Documents []*Document
 
-	fs fileSys.FileSystem
+	noDownload bool
+	fs         fileSys.FileSystem
+}
+
+func (d *UserData) Download() bool {
+	return !d.noDownload
+}
+
+func (d *UserData) NoDownload() {
+	d.noDownload = true
 }
 
 func (d *UserData) Save(fs fileSys.FileSystem) error {
@@ -42,7 +52,14 @@ func (d *UserData) Save(fs fileSys.FileSystem) error {
 }
 
 func (d *UserData) Add(data []byte) error {
-	name := time.Now().Format("2006-01-02_15-04-05") + ".jpg"
+	baseName := time.Now().Format("2006-01-02_15-04-05")
+	name := baseName + ".jpg"
+	i := 1
+	for d.exists(name) {
+		i++
+		name = baseName + "_" + strconv.Itoa(i) + ".jpg"
+	}
+
 	w, err := d.fs.Writer(name)
 	if err != nil {
 		return err
@@ -65,7 +82,7 @@ func (d *UserData) Create() error {
 		}
 	}
 	log.Println("Creating PDF from", len(names), "images")
-	var rotNames []string
+	var pdfImages []scanner.PdfImage
 	for _, name := range names {
 		r, err := d.fs.Reader(name)
 		if err != nil {
@@ -80,11 +97,11 @@ func (d *UserData) Create() error {
 		if err != nil {
 			return err
 		}
-		rotName, err := d.writeImage(name, im)
+		pdfImage, err := d.writeImage(name, im)
 		if err != nil {
 			return err
 		}
-		rotNames = append(rotNames, rotName)
+		pdfImages = append(pdfImages, pdfImage)
 	}
 
 	pdfName := names[0] + ".pdf"
@@ -93,7 +110,7 @@ func (d *UserData) Create() error {
 		return err
 	}
 
-	err = scanner.CreatePDF(w, rotNames...)
+	err = scanner.CreatePDF(w, pdfImages...)
 	if err != nil {
 		return err
 	}
@@ -109,16 +126,20 @@ func (d *UserData) Create() error {
 	return nil
 }
 
-func (d *UserData) writeImage(name string, img image.Image) (string, error) {
+func (d *UserData) writeImage(name string, img image.Image) (scanner.PdfImage, error) {
 	name = filepath.Join(os.TempDir(), "scan_"+name)
 	f, err := os.Create(name)
 	defer f.Close()
 	err = jpeg.Encode(f, img, &jpeg.Options{Quality: 100})
 	if err != nil {
-		return "", err
+		return scanner.PdfImage{}, err
 	}
 
-	return name, nil
+	return scanner.PdfImage{
+		Name:   name,
+		Width:  img.Bounds().Dx(),
+		Height: img.Bounds().Dy(),
+	}, nil
 }
 
 func Load(fs fileSys.FileSystem) (*UserData, error) {
@@ -141,7 +162,7 @@ func (d *UserData) DeleteAll() error {
 	for _, doc := range d.Documents {
 		err := d.fs.Delete(doc.Name)
 		if err != nil {
-			return err
+			log.Println("Error deleting document", doc.Name, err)
 		}
 	}
 	d.Documents = d.Documents[0:0]
@@ -164,4 +185,13 @@ func (d *UserData) Delete(index int) error {
 
 func (d *UserData) Reader(name string) (io.ReadCloser, error) {
 	return d.fs.Reader(name)
+}
+
+func (d *UserData) exists(name string) bool {
+	for _, doc := range d.Documents {
+		if doc.Name == name {
+			return true
+		}
+	}
+	return false
 }

@@ -69,14 +69,14 @@ var webcam = {
             formData.append("flip", webcam.vFlip?"true":"false");
             // (E2) UPLOAD SCREENSHOT TO SERVER
             fetch("/store/", {body: formData, method: "post", signal: AbortSignal.timeout(30000)})
-                .then(res => res.text())
+                .then(res => {
+                    webcam.uploadDiv.style.visibility = "hidden";
+                    webcam.successDiv.style.visibility = "visible";
+                    return res.text()}
+                )
                 .catch(reason => {
                     webcam.uploadDiv.style.visibility = "hidden";
                     webcam.failedDiv.style.visibility = "visible";
-                })
-                .then(txt => {
-                    webcam.uploadDiv.style.visibility = "hidden";
-                    webcam.successDiv.style.visibility = "visible";
                 });
         },"image/jpeg", 0.9);
     }

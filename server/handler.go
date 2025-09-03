@@ -2,6 +2,7 @@ package server
 
 import (
 	"embed"
+	"github.com/hneemann/session"
 	"html/template"
 	"io"
 	"log"
@@ -24,10 +25,15 @@ var (
 )
 
 func Main(writer http.ResponseWriter, request *http.Request) {
-
-	err := mainViewTemp.Execute(writer, nil)
-	if err != nil {
-		log.Println("Error executing template:", err)
+	if userData, ok := request.Context().Value("data").(*data.UserData); ok {
+		err := mainViewTemp.Execute(writer, userData)
+		if err != nil {
+			log.Println("Error executing template:", err)
+		}
+	} else {
+		http.Error(writer, "No data found in context", http.StatusInternalServerError)
+		log.Println("No data found in context")
+		return
 	}
 }
 
@@ -94,7 +100,7 @@ func Create(writer http.ResponseWriter, request *http.Request) {
 }
 
 func Documents(writer http.ResponseWriter, request *http.Request) {
-	if userData, ok := request.Context().Value("data").(*data.UserData); ok {
+	if userData, ok := request.Context().Value("data").(*data.UserData); ok && userData.Download() {
 
 		query := request.URL.Query()
 		delStr := query.Get("delete")
@@ -170,5 +176,19 @@ func Documents(writer http.ResponseWriter, request *http.Request) {
 		http.Error(writer, "No data found in context", http.StatusInternalServerError)
 		log.Println("No data found in context")
 		return
+	}
+}
+
+func LoginAnonymous(sm *session.Cache[data.UserData]) http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		id, err := sm.CreateSessionToken("anonymous", "")
+		if err == nil {
+			http.SetCookie(writer, session.CreateSecureCookie("id", id))
+		}
+		ud := sm.GetSessionData(id)
+		if ud != nil {
+			ud.NoDownload()
+		}
+		http.Redirect(writer, request, "/", http.StatusSeeOther)
 	}
 }

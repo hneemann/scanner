@@ -44,8 +44,8 @@ div.controls {
 div.controls img {
   flex-grow: 1;
   border: 0;
-  padding-left: 10vw;
-  padding-right: 10vw;
+  padding-left: 6vw;
+  padding-right: 6vw;
   cursor: pointer;
 }
 

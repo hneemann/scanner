@@ -41,11 +41,13 @@ func TestFirst(t *testing.T) {
 	path3, err := writeImage("i3", rotate)
 	assert.NoError(t, err)
 
-	err = CreatePDF("/home/hneemann/temp/scan/z.pdf", path1, path2, path3)
+	w, err := os.Create("/home/hneemann/temp/scan/z.pdf")
+	assert.NoError(t, err)
+	err = CreatePDF(w, path1, path2, path3)
 	assert.NoError(t, err)
 }
 
-func TestDebug(t *testing.T) {
+/*func TestDebug(t *testing.T) {
 	folder := "/home/hneemann/temp/scan/admin"
 	f, err := os.Open(filepath.Join(folder, "2025-08-21_08-22-33.jpg"))
 	assert.NoError(t, err)
@@ -55,20 +57,24 @@ func TestDebug(t *testing.T) {
 	assert.NoError(t, err, "Failed to rotate image")
 	_, err = writeImage("z", rotate)
 	assert.NoError(t, err)
-}
+}*/
 
-func writeImage(name string, img image.Image) (string, error) {
+func writeImage(name string, img image.Image) (PdfImage, error) {
 	if img == nil {
-		return "", fmt.Errorf("image is nil")
+		return PdfImage{}, fmt.Errorf("image is nil")
 	}
 
 	path := "/home/hneemann/temp/scan/" + name + ".jpg"
 	f, err := os.Create(path)
 	if err != nil {
-		return "", err
+		return PdfImage{}, err
 	}
 	defer f.Close()
-	return path, jpeg.Encode(f, img, &jpeg.Options{Quality: 100})
+	return PdfImage{
+		Name:   path,
+		Width:  img.Bounds().Dx(),
+		Height: img.Bounds().Dy(),
+	}, jpeg.Encode(f, img, &jpeg.Options{Quality: 100})
 }
 
 func TestIntegration(t *testing.T) {

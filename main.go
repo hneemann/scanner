@@ -26,22 +26,50 @@ func (p persist) Save(fs fileSys.FileSystem, data *data.UserData) error {
 	return data.Save(fs)
 }
 
+type anonymousDataManager struct {
+	parent session.Manager[data.UserData]
+}
+
+func (a anonymousDataManager) CreateUser(user, pass string) (*data.UserData, error) {
+	return a.parent.CreateUser(user, pass)
+}
+
+func (a anonymousDataManager) CheckPassword(user, pass string) bool {
+	if user == "anonymous" && pass == "" {
+		return true
+	}
+	return a.parent.CheckPassword(user, pass)
+}
+
+func (a anonymousDataManager) CreatePersist(user, pass string) (session.Persist[data.UserData], error) {
+	return a.parent.CreatePersist(user, pass)
+}
+
 func main() {
 	dataFolder := flag.String("folder", "", "data folder")
 	cert := flag.String("cert", "", "certificate")
 	key := flag.String("key", "", "certificate")
 	port := flag.Int("port", 8080, "port")
 	debug := flag.Bool("debug", false, "debug mode. In this mode, the server does not enable browser caching. Also, user 'admin' with password 'admin' is created with a fixed session token. This does not work if OIDC is used!")
+	anonymous := flag.Bool("anon", false, "allows to log in anonymously to user anonymous!")
 	flag.Parse()
 
 	log.Println("Folder:", *dataFolder)
 
 	mux := http.NewServeMux()
 
+	var manager session.Manager[data.UserData]
+	manager = session.NewDataManager[data.UserData](
+		session.NewFileSystemFactory(*dataFolder),
+		persist{})
+
+	if *anonymous {
+		log.Println("anonymous login enabled")
+		manager = anonymousDataManager{manager}
+	}
+
 	sc := session.NewSessionCache[data.UserData](
-		session.NewDataManager[data.UserData](
-			session.NewFileSystemFactory(*dataFolder),
-			persist{}),
+		manager,
 		time.Hour, 15*time.Minute)
 	if *debug {
 		err := sc.CreateDebugSession("admin", "admin", "debugTokenForAdmin")
@@ -53,12 +81,16 @@ func main() {
 
 	mux.HandleFunc("/login", sc.LoginHandler(server.Templates.Lookup("login.html")))
 	mux.HandleFunc("/register", sc.RegisterHandler(server.Templates.Lookup("register.html")))
+	mux.HandleFunc("/logout", sc.LogoutHandler(server.Templates.Lookup("logout.html")))
 
 	mux.Handle("/assets/", Cache(http.FileServer(http.FS(server.Assets)), 180, !*debug))
 	mux.HandleFunc("/", sc.CheckSessionFunc(server.Main))
 	mux.HandleFunc("/store/", sc.CheckSessionFunc(server.Store))
 	mux.HandleFunc("/create/", sc.CheckSessionFunc(server.Create))
 	mux.HandleFunc("/documents/", sc.CheckSessionFunc(server.Documents))
+	if *anonymous {
+		mux.HandleFunc("/anonymous/", server.LoginAnonymous(sc))
+	}
 
 	serv := &http.Server{Addr: ":" + strconv.Itoa(*port), Handler: mux}
 
