@@ -2,8 +2,8 @@ github.com/boombuler/barcode v1.0.0/go.mod h1:paBWMcWSl3LHKBqUq+rly7CNSldXjb2rDl
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/hneemann/session v0.0.0-20250506050838-17caf730c285 h1:Z636Qe5KKVVm5dclqxXlFw4BxVxneY8vFTJ5Lh5Mg3I=
-github.com/hneemann/session v0.0.0-20250506050838-17caf730c285/go.mod h1:ldjS1vGSjejww/dhUCgNtxEPL0u4fCGvXJAfHUSKJbo=
+github.com/hneemann/session v0.0.0-20250903061046-8809c5524dd9 h1:4+RGuJl8T5669xEF4YOo6Uu79ZlVvzzgCYZlPRm1VkA=
+github.com/hneemann/session v0.0.0-20250903061046-8809c5524dd9/go.mod h1:ldjS1vGSjejww/dhUCgNtxEPL0u4fCGvXJAfHUSKJbo=
 github.com/jung-kurt/gofpdf v1.0.0/go.mod h1:7Id9E/uU8ce6rXgefFLlgrJj/GYY22cpxn+r32jIOes=
 github.com/jung-kurt/gofpdf v1.16.2 h1:jgbatWHfRlPYiK85qgevsZTHviWXKwB1TTiKdz5PtRc=
 github.com/jung-kurt/gofpdf v1.16.2/go.mod h1:1hl7y57EsiPAkLbOwzpzqgx1A30nQCk/YmFV8S2vmK0=
