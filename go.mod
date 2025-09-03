@@ -3,7 +3,7 @@ module scan
 go 1.24
 
 require (
-	github.com/hneemann/session v0.0.0-20250506050838-17caf730c285
+	github.com/hneemann/session v0.0.0-20250903061046-8809c5524dd9
 	github.com/jung-kurt/gofpdf v1.16.2
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/image v0.0.0-20191009234506-e7c1f5e7dbb8
