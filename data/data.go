@@ -42,6 +42,10 @@ func (d *UserData) NoDownload() {
 	d.noDownload = true
 }
 
+func (d *UserData) SetFileSystem(fs fileSys.FileSystem) {
+	d.fs = fs
+}
+
 func (d *UserData) Save(fs fileSys.FileSystem) error {
 	d.fs = fs
 	w, err := d.fs.Writer("data.json")

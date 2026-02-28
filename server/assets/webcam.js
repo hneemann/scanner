@@ -12,13 +12,14 @@ var webcam = {
         webcam.successDocDiv=document.getElementById("successDoc");
         webcam.failedDiv=document.getElementById("failed");
 
-        navigator.mediaDevices.getUserMedia({video: {width: { ideal: 4096 }, height: { ideal: 2160 } , facingMode: { exact: 'environment' }}})
+        navigator.mediaDevices.getUserMedia({audio: false, video: {width: { ideal: 4096 }, facingMode: { exact: 'environment' }}})
             .then(stream => {
                 // (A1) GET HTML ELEMENTS
                 webcam.hVid = document.getElementById("cam-live");
 
                 // (A2) "LIVE FEED" WEB CAM TO <VIDEO>
                 webcam.hVid.srcObject = stream;
+
 
                 // (A3) ENABLE BUTTONS
                 //document.getElementById("cam-take").disabled = false;

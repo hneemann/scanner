@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"github.com/hneemann/session"
 	"github.com/hneemann/session/fileSys"
@@ -18,6 +19,11 @@ import (
 
 type persist struct{}
 
+func (p persist) Init(fs fileSys.FileSystem, d *data.UserData) error {
+	d.SetFileSystem(fs)
+	return nil
+}
+
 func (p persist) Load(fs fileSys.FileSystem) (*data.UserData, error) {
 	return data.Load(fs)
 }
@@ -30,6 +36,14 @@ type anonymousDataManager struct {
 	parent session.Manager[data.UserData]
 }
 
+func (a anonymousDataManager) DeleteOldUsers(maxAge time.Duration) error {
+	return a.parent.DeleteOldUsers(maxAge)
+}
+
+func (a anonymousDataManager) DoesUserExist(user string) bool {
+	return a.parent.DoesUserExist(user)
+}
+
 func (a anonymousDataManager) CreateUser(user, pass string) (*data.UserData, error) {
 	return a.parent.CreateUser(user, pass)
 }
@@ -39,6 +53,13 @@ func (a anonymousDataManager) CheckPassword(user, pass string) bool {
 		return true
 	}
 	return a.parent.CheckPassword(user, pass)
+}
+
+func (a anonymousDataManager) ChangePassword(user, oldPass, newPass string) error {
+	if user == "anonymous" && oldPass == "" {
+		return errors.New("password for anonymous user cannot be changed")
+	}
+	return a.parent.ChangePassword(user, oldPass, newPass)
 }
 
 func (a anonymousDataManager) CreatePersist(user, pass string) (session.Persist[data.UserData], error) {
@@ -59,7 +80,7 @@ func main() {
 	mux := http.NewServeMux()
 
 	var manager session.Manager[data.UserData]
-	manager = session.NewDataManager[data.UserData](
+	manager = session.NewFileManager[data.UserData](
 		session.NewFileSystemFactory(*dataFolder),
 		persist{})
 

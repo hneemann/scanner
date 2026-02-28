@@ -16,7 +16,8 @@ body {
 /* (B) LIVE FEED VIDEO */
 #cam-live {
   height: 85vh;
-  object-fit: cover;
+  background: white;
+  object-fit: contain;
 }
 
 h2.doc {
