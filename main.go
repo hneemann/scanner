@@ -91,7 +91,7 @@ func main() {
 
 	sc := session.NewSessionCache[data.UserData](
 		manager,
-		time.Hour, 15*time.Minute)
+		3*time.Hour, time.Hour)
 	if *debug {
 		err := sc.CreateDebugSession("admin", "admin", "debugTokenForAdmin")
 		if err != nil {
@@ -106,8 +106,8 @@ func main() {
 
 	mux.Handle("/assets/", Cache(http.FileServer(http.FS(server.Assets)), 180, !*debug))
 	mux.HandleFunc("/", sc.CheckSessionFunc(server.Main))
-	mux.HandleFunc("/store/", sc.CheckSessionFunc(server.Store))
-	mux.HandleFunc("/create/", sc.CheckSessionFunc(server.Create))
+	mux.HandleFunc("/store/", sc.CheckSessionRestFunc(server.Store))
+	mux.HandleFunc("/create/", sc.CheckSessionRestFunc(server.Create))
 	mux.HandleFunc("/documents/", sc.CheckSessionFunc(server.Documents))
 	if *anonymous {
 		mux.HandleFunc("/anonymous/", server.LoginAnonymous(sc))

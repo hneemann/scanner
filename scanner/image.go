@@ -291,7 +291,7 @@ func toLines(points []Vector) (segment, segment, error) {
 	})
 
 	if len(segm) < 2 {
-		return segment{}, segment{}, errors.New("not enough segments found")
+		return segment{}, segment{}, errors.New("could not find a page: not enough edges found")
 	}
 
 	var s0 *segment
@@ -305,7 +305,7 @@ func toLines(points []Vector) (segment, segment, error) {
 		}
 	}
 	if s0 == nil || s1 == nil {
-		return segment{}, segment{}, errors.New("no perpendicular edges")
+		return segment{}, segment{}, errors.New("could not a find page: no perpendicular edges")
 	}
 
 	return *s0, *s1, nil

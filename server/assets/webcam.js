@@ -71,13 +71,24 @@ var webcam = {
             // (E2) UPLOAD SCREENSHOT TO SERVER
             fetch("/store/", {body: formData, method: "post", signal: AbortSignal.timeout(30000)})
                 .then(res => {
-                    webcam.uploadDiv.style.visibility = "hidden";
-                    webcam.successDiv.style.visibility = "visible";
+                    if (res.status !== 200) {
+                        document.getElementById("failedStatus").innerHTML="(response: "+res.status+")";
+                        webcam.uploadDiv.style.visibility = "hidden";
+                        webcam.failedDiv.style.visibility = "visible";
+                    }
                     return res.text()}
                 )
                 .catch(reason => {
+                    document.getElementById("failedCause").innerHTML=reason.toString();
                     webcam.uploadDiv.style.visibility = "hidden";
                     webcam.failedDiv.style.visibility = "visible";
+                })
+                .then(txt => {
+                   document.getElementById("failedCause").innerHTML=txt.toString();
+                   webcam.uploadDiv.style.visibility = "hidden";
+                   if (webcam.failedDiv.style.visibility!=="visible") {
+                       webcam.successDiv.style.visibility = "visible";
+                   }
                 });
         },"image/jpeg", 0.9);
     }
@@ -96,14 +107,25 @@ function createPDF() {
     webcam.uploadDiv.style.visibility = "visible";
 
     fetch("/create/", {method: "get", signal: AbortSignal.timeout(30000)})
-        .then(res => res.text())
+        .then(res => {
+            if (res.status !== 200) {
+                document.getElementById("failedStatus").innerHTML="(status: "+res.status+")";
+                webcam.uploadDiv.style.visibility = "hidden";
+                webcam.failedDiv.style.visibility = "visible";
+            }
+            return res.text()
+        })
         .catch(reason => {
+            document.getElementById("failedCause").innerHTML=reason.toString();
             webcam.uploadDiv.style.visibility = "hidden";
             webcam.failedDiv.style.visibility = "visible";
         })
         .then(txt => {
+            document.getElementById("failedCause").innerHTML=txt.toString();
             webcam.uploadDiv.style.visibility = "hidden";
-            webcam.successDocDiv.style.visibility = "visible";
+            if (webcam.failedDiv.style.visibility!=="visible") {
+                webcam.successDocDiv.style.visibility = "visible";
+            }
         });
 
 }
