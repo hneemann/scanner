@@ -95,6 +95,17 @@ var webcam = {
 };
 window.addEventListener("load", webcam.init);
 
+function makePhoto() {
+    let el=document.getElementById("photoIcon");
+    if (el) {
+        el.src = "/assets/photoTimer.svg";
+        setTimeout(() => {
+            el.src = "/assets/photo.svg";
+            webcam.upload();
+        }, 2000);
+    }
+}
+
 function hide(id) {
     let el=document.getElementById(id);
     if (el) {
