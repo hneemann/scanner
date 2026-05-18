@@ -74,7 +74,7 @@ func writeImage(name string, img image.Image) (PdfImage, error) {
 		Name:   path,
 		Width:  img.Bounds().Dx(),
 		Height: img.Bounds().Dy(),
-	}, jpeg.Encode(f, img, &jpeg.Options{Quality: 100})
+	}, jpeg.Encode(f, img, &jpeg.Options{Quality: 90})
 }
 
 func TestIntegration(t *testing.T) {
