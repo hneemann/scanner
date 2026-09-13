@@ -102,7 +102,7 @@ function makePhoto() {
         setTimeout(() => {
             el.src = "/assets/photo.svg";
             webcam.upload();
-        }, 2000);
+        }, 1000);
     }
 }
 
