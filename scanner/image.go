@@ -9,6 +9,8 @@ import (
 	"sort"
 )
 
+const expandFactor = 1.5
+
 type Vector struct {
 	X, Y int
 }
@@ -210,7 +212,7 @@ func Rotate(img image.Image, debug bool) (image.Image, error) {
 		width := int(math.Max(tl.sub(tr).abs(), bl.sub(br).abs()))
 		height := int(math.Max(tl.sub(bl).abs(), br.sub(br).abs()))
 
-		newImage := image.NewRGBA(image.Rect(0, 0, width, height))
+		newImage := image.NewGray(image.Rect(0, 0, width, height))
 		rect := img.Bounds()
 
 		trans := transform{tl: tl, tr: tr, bl: bl, br: br, width: width, height: height}
@@ -223,6 +225,7 @@ func Rotate(img image.Image, debug bool) (image.Image, error) {
 					c = color.White
 				} else {
 					c = img.At(xx, yy)
+					c = expandColor(c)
 				}
 
 				newImage.Set(x, y, c)
@@ -231,6 +234,17 @@ func Rotate(img image.Image, debug bool) (image.Image, error) {
 		return newImage, nil
 	}
 
+}
+
+func expandColor(c color.Color) color.Gray {
+	gray := color.GrayModel.Convert(c).(color.Gray).Y
+	exp := (float32(int32(gray)-128) * expandFactor) + 128
+	if exp < 0 {
+		exp = 0
+	} else if exp > 255 {
+		exp = 255
+	}
+	return color.Gray{uint8(exp)}
 }
 
 type segment struct {

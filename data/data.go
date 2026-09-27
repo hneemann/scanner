@@ -134,7 +134,7 @@ func (d *UserData) writeImage(name string, img image.Image) (scanner.PdfImage, e
 	name = filepath.Join(os.TempDir(), "scan_"+name)
 	f, err := os.Create(name)
 	defer f.Close()
-	err = jpeg.Encode(f, img, &jpeg.Options{Quality: 90})
+	err = jpeg.Encode(f, img, &jpeg.Options{Quality: 75})
 	if err != nil {
 		return scanner.PdfImage{}, err
 	}
